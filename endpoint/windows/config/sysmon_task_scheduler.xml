@@ -1,0 +1,21 @@
+<Sysmon schemaversion="4.50">
+  <HashAlgorithms>md5,sha256,imphash</HashAlgorithms>
+  <EventFiltering>
+    <!-- Monitorar criação de chaves de registro do Task Scheduler -->
+    <RegistryEvent onmatch="include">
+      <TargetObject condition="contains">SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tree</TargetObject>
+      <EventType>CreateKey</EventType>
+    </RegistryEvent>
+
+    <!-- Monitorar processos do Task Scheduler -->
+    <ProcessCreate onmatch="include">
+      <Image condition="end with">schtasks.exe</Image>
+      <Image condition="end with">taskeng.exe</Image>
+    </ProcessCreate>
+
+    <!-- Monitorar modificações em arquivos de tarefas -->
+    <FileCreate onmatch="include">
+      <TargetFilename condition="contains">Windows\System32\Tasks</TargetFilename>
+    </FileCreate>
+  </EventFiltering>
+</Sysmon> 

@@ -1,0 +1,29 @@
+<group name="lynx,ransomware,">
+  <!-- Detecção de notas de resgate -->
+  <rule id="100101" level="12" timeframe="100" frequency="2" ignore="300">
+    <if_sid>61613</if_sid>
+    <field name="win.eventdata.image" type="pcre2">(?i)[C-Z]:.*\\\\.*.exe</field>
+    <field name="win.eventdata.targetFilename" type="pcre2">(?i)\C:.*.README.txt</field>
+    <description>O arquivo $(win.eventdata.targetFilename) foi criado em múltiplos diretórios. Possível ataque ransomware detectado.</description>
+    <mitre>
+      <id>T1486</id>
+    </mitre>
+  </rule>
+
+  <!-- Detecção de arquivos criptografados -->
+  <rule id="100102" level="15" timeframe="100" frequency="2" ignore="300">
+    <if_sid>550,554</if_sid>
+    <field name="file" type="pcre2">(?i).LYNX</field>
+    <description>Arquivo criptografado por Ransomware. Lynx ransomware detectado.</description>
+    <mitre>
+      <id>T1486</id>
+    </mitre>
+  </rule>
+
+  <!-- Regra de agrupamento para atividade de ransomware -->
+  <rule id="100104" level="12" timeframe="300" frequency="2" ignore="300">
+    <if_matched_group>lynx</if_matched_group>
+    <if_sid>100101,100102</if_sid>
+    <description>Atividade de ransomware detectada.</description>
+  </rule>
+</group> 

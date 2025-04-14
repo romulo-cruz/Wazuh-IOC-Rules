@@ -1,0 +1,52 @@
+<group name="vulnerability,cups">
+  <!-- CVE-2024-47176 -->
+  <rule id="100301" level="12">
+    <if_sid>23501</if_sid>
+    <field name="vulnerability.cve">CVE-2024-47176</field>
+    <field name="vulnerability.package.name">cups-browsed</field>
+    <description>CUPS Vulnerabilidade RCE (CVE-2024-47176) detectada - cups-browsed <= 2.0.1</description>
+    <mitre>
+      <id>T1190</id>
+    </mitre>
+  </rule>
+
+  <!-- CVE-2024-47076 -->
+  <rule id="100302" level="12">
+    <if_sid>23501</if_sid>
+    <field name="vulnerability.cve">CVE-2024-47076</field>
+    <field name="vulnerability.package.name">libcupsfilters</field>
+    <description>CUPS Vulnerabilidade RCE (CVE-2024-47076) detectada - libcupsfilters <= 2.1b1</description>
+    <mitre>
+      <id>T1190</id>
+    </mitre>
+  </rule>
+
+  <!-- CVE-2024-47175 -->
+  <rule id="100303" level="12">
+    <if_sid>23501</if_sid>
+    <field name="vulnerability.cve">CVE-2024-47175</field>
+    <field name="vulnerability.package.name">libppd</field>
+    <description>CUPS Vulnerabilidade RCE (CVE-2024-47175) detectada - libppd <= 2.1b1</description>
+    <mitre>
+      <id>T1190</id>
+    </mitre>
+  </rule>
+
+  <!-- CVE-2024-47177 -->
+  <rule id="100304" level="12">
+    <if_sid>23501</if_sid>
+    <field name="vulnerability.cve">CVE-2024-47177</field>
+    <field name="vulnerability.package.name">cups-filters</field>
+    <description>CUPS Vulnerabilidade RCE (CVE-2024-47177) detectada - cups-filters <= 2.0.1</description>
+    <mitre>
+      <id>T1190</id>
+    </mitre>
+  </rule>
+
+  <!-- Resolução de vulnerabilidades -->
+  <rule id="100305" level="3">
+    <if_sid>23502</if_sid>
+    <field name="vulnerability.package.name">cups-browsed|libcupsfilters|libppd|cups-filters</field>
+    <description>Vulnerabilidade CUPS resolvida para $(vulnerability.package.name)</description>
+  </rule>
+</group> 

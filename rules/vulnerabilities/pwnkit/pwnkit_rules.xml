@@ -1,0 +1,35 @@
+<group name="pwnkit,attack,">
+  <!-- Detecção via logs do sistema -->
+  <rule id="100700" level="12">
+    <program_name>pkexec</program_name>
+    <match>The value for the SHELL variable was not found the /etc/shells file [USER=root]</match>
+    <description>Possível tentativa de exploração de vulnerabilidade de elevação de privilégios no polkit pkexec (CVE-2021-4034) via injeção de variável de ambiente insegura.</description>
+    <mitre>
+      <id>T1068</id>
+      <id>T1574</id>
+    </mitre>
+  </rule>
+
+  <!-- Detecção via Auditd -->
+  <rule id="100701" level="12">
+    <if_group>audit</if_group>
+    <regex type="pcre2">(?i)name="\/usr\/bin\/pkexec".*="root"|https:\/\/raw\.githubusercontent\.com.*PwnKit|pwnkit</regex>
+    <description>Possível tentativa de exploração de vulnerabilidade de elevação de privilégios no polkit pkexec (CVE-2021-4034) detectada via Auditd.</description>
+    <mitre>
+      <id>T1068</id>
+      <id>T1574</id>
+    </mitre>
+  </rule>
+
+  <!-- Correlação de eventos -->
+  <rule id="100702" level="15">
+    <if_sid>100700</if_sid>
+    <if_matched_sid>100701</if_matched_sid>
+    <same_source_ip />
+    <description>Múltiplos indicadores de exploração PwnKit detectados - Possível ataque em andamento</description>
+    <mitre>
+      <id>T1068</id>
+      <id>T1574</id>
+    </mitre>
+  </rule>
+</group> 

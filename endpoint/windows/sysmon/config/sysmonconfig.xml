@@ -1,0 +1,38 @@
+<Sysmon schemaversion="4.81">
+  <HashAlgorithms>md5,sha256</HashAlgorithms>
+  <EventFiltering>
+    <!-- Process Creation -->
+    <RuleGroup name="" groupRelation="or">
+      <ProcessCreate onmatch="include">
+        <Rule name="PowerShell Execution" groupRelation="and">
+          <Image condition="end with">powershell.exe</Image>
+          <CommandLine condition="contains">-NoProfile</CommandLine>
+          <CommandLine condition="contains">-ExecutionPolicy unrestricted</CommandLine>
+        </Rule>
+      </ProcessCreate>
+    </RuleGroup>
+
+    <!-- File Creation -->
+    <RuleGroup name="" groupRelation="or">
+      <FileCreate onmatch="include">
+        <TargetFilename condition="contains">AppData\Local\Temp</TargetFilename>
+        <TargetFilename condition="end with">.ps1</TargetFilename>
+      </FileCreate>
+    </RuleGroup>
+
+    <!-- Registry Events -->
+    <RuleGroup name="" groupRelation="or">
+      <RegistryEvent onmatch="include">
+        <TargetObject condition="contains">CurrentControlSet\Services\bam\State\UserSettings</TargetObject>
+      </RegistryEvent>
+    </RuleGroup>
+
+    <!-- DLL Loading -->
+    <RuleGroup name="" groupRelation="or">
+      <ImageLoad onmatch="include">
+        <ImageLoaded condition="contains">mscorlib.ni.dll</ImageLoaded>
+        <ImageLoaded condition="contains">clrjit.dll</ImageLoaded>
+      </ImageLoad>
+    </RuleGroup>
+  </EventFiltering>
+</Sysmon> 

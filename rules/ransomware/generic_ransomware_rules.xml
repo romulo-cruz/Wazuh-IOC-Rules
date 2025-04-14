@@ -1,0 +1,49 @@
+<group name="windows,ransomware">
+  <!-- Detecção de múltiplas operações de criptografia -->
+  <rule id="100700" level="12">
+    <if_sid>550</if_sid>
+    <field name="win.eventdata.TargetFilename" type="pcre2">\.(encrypted|locked|crypt|cry|crypto)</field>
+    <description>Possível atividade de ransomware - Múltiplos arquivos sendo criptografados</description>
+    <mitre>
+      <id>T1486</id>
+    </mitre>
+  </rule>
+
+  <!-- Detecção de remoção de shadow copies -->
+  <rule id="100701" level="15">
+    <if_sid>61603</if_sid>
+    <field name="win.eventdata.CommandLine" type="pcre2">vssadmin.*delete.*shadows</field>
+    <description>Tentativa de remoção de shadow copies detectada</description>
+    <mitre>
+      <id>T1490</id>
+    </mitre>
+  </rule>
+
+  <!-- Detecção de notas de resgate -->
+  <rule id="100702" level="12">
+    <if_sid>554</if_sid>
+    <field name="win.eventdata.TargetFilename" type="pcre2">(?i)(HOW_TO|DECRYPT|README|RANSOM|RECOVERY).*\.(txt|html|htm)</field>
+    <description>Possível nota de resgate de ransomware detectada</description>
+    <mitre>
+      <id>T1486</id>
+    </mitre>
+  </rule>
+
+  <!-- Detecção de múltiplas exclusões -->
+  <rule id="100703" level="12">
+    <if_sid>61613</if_sid>
+    <field name="win.eventdata.Image" type="pcre2">\.exe</field>
+    <field name="win.eventdata.TargetFilename" type="pcre2">\.(bak|backup)</field>
+    <description>Possível atividade de ransomware - Remoção de backups</description>
+    <mitre>
+      <id>T1490</id>
+    </mitre>
+  </rule>
+
+  <!-- Alerta de recuperação bem-sucedida -->
+  <rule id="100704" level="5">
+    <decoded_as>Wazuh_Ransomware</decoded_as>
+    <field name="rollback_status">completed</field>
+    <description>Wazuh_Ransomware_Protection: Arquivos restaurados com sucesso</description>
+  </rule>
+</group> 

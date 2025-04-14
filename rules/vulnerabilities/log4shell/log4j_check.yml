@@ -1,0 +1,32 @@
+policy:
+  id: "log4j_check"
+  file: "log4j_check.yml"
+  name: "Verificação de dependência Log4j"
+  description: "Este documento fornece orientações para identificar a vulnerabilidade Log4j RCE"
+  references:
+    - https://nvd.nist.gov/vuln/detail/CVE-2021-44228
+    - https://www.cisa.gov/uscert/apache-log4j-vulnerability-guidance
+
+requirements:
+  title: "Verificar se Java está presente na máquina"
+  description: "Requisitos para executar a verificação SCA em máquinas com Java."
+  condition: all
+  rules:
+    - 'c:sh -c "ps aux | grep java | grep -v grep" -> r:java'
+
+checks:
+  - id: 10000
+    title: "Garantir que Log4j não está no sistema ou está abaixo da versão 2.16"
+    description: "A biblioteca Log4j é vulnerável a RCE nas versões entre 2.10 e 2.15"
+    remediation: "Atualizar a biblioteca log4j para versão 2.16 ou definir log4j2.formatMsgNoLookups como true se possível"
+    condition: none
+    rules:
+      - 'c:find / -regex ".*log4j.*.jar" -type f -exec sh -c "unzip -p {} META-INF/MANIFEST.MF | grep Implementation-Version" \; -> r: 2.10.| 2.11.| 2.12.| 2.13.| 2.14.| 2.15.'
+
+  - id: 10001
+    title: "Garantir que Java não está em execução ou está configurado corretamente"
+    description: "A biblioteca Log4j é vulnerável a RCE nas versões entre 2.10 e 2.15"
+    remediation: "Atualizar a biblioteca log4j para versão 2.16 ou definir log4j2.formatMsgNoLookups como true se possível"
+    condition: any
+    rules:
+      - 'c:sh -c "ps aux | grep java | grep -v grep" -> r:java && r:Dlog4j2.formatMsgNoLookups=true' 

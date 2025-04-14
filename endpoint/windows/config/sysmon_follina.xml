@@ -1,0 +1,30 @@
+<Sysmon schemaversion="4.50">
+  <HashAlgorithms>md5,sha256,imphash</HashAlgorithms>
+  <EventFiltering>
+    <!-- Monitorar criação de processos -->
+    <ProcessCreate onmatch="include">
+      <Rule name="TechniqueID=T1203,TechniqueName=Exploitation for Client Execution">
+        <ParentImage condition="end with">
+          winword.exe
+          excel.exe
+          powerpnt.exe
+          outlook.exe
+          msaccess.exe
+          lync.exe
+          mspub.exe
+          onenote.exe
+        </ParentImage>
+      </Rule>
+    </ProcessCreate>
+
+    <!-- Monitorar carregamento de DLLs -->
+    <ImageLoad onmatch="include">
+      <ImageLoaded condition="contains">msdt.exe</ImageLoaded>
+    </ImageLoad>
+
+    <!-- Monitorar conexões de rede -->
+    <NetworkConnect onmatch="include">
+      <Image condition="end with">msdt.exe</Image>
+    </NetworkConnect>
+  </EventFiltering>
+</Sysmon> 

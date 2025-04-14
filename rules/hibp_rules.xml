@@ -1,0 +1,17 @@
+<group name="hibp,compromised_accounts,security">
+  <!-- Regra base para HIBP -->
+  <rule id="100100" level="10">
+    <decoded_as>json</decoded_as>
+    <match>hibpwned</match>
+    <description>Possível vazamento de dados detectado para email monitorado</description>
+    <group>account_compromised,gdpr_IV_32.2,hipaa_164.312.a.1,pci_dss_10.6.1,</group>
+  </rule>
+
+  <!-- Vazamento crítico -->
+  <rule id="100101" level="12">
+    <if_sid>100100</if_sid>
+    <field name="severity">high</field>
+    <description>Vazamento crítico detectado para $(email) - Breach: $(breach)</description>
+    <group>account_compromised,gdpr_IV_32.2,hipaa_164.312.a.1,pci_dss_10.6.1,</group>
+  </rule>
+</group> 

@@ -1,0 +1,44 @@
+<group name="linux,snapekit,rootkit">
+  <!-- Detecção de módulo não assinado -->
+  <rule id="100401" level="12">
+    <if_sid>5132</if_sid>
+    <match>snapekit.ko</match>
+    <description>Módulo Snapekit rootkit detectado sendo carregado no kernel</description>
+    <mitre>
+      <id>T1014</id>
+      <id>T1215</id>
+    </mitre>
+  </rule>
+
+  <!-- Detecção de arquivo do Snapekit -->
+  <rule id="100402" level="12">
+    <if_sid>554</if_sid>
+    <match>/lib/modules/snapekit.ko</match>
+    <description>Arquivo do rootkit Snapekit detectado no sistema</description>
+    <mitre>
+      <id>T1014</id>
+    </mitre>
+  </rule>
+
+  <!-- Detecção de processo kworker suspeito -->
+  <rule id="100403" level="12">
+    <if_sid>61603</if_sid>
+    <match>kworker</match>
+    <field name="process.name">kworker</field>
+    <description>Processo kworker suspeito detectado - possível atividade do Snapekit</description>
+    <mitre>
+      <id>T1014</id>
+      <id>T1036.004</id>
+    </mitre>
+  </rule>
+
+  <!-- Detecção de manipulação de capabilities -->
+  <rule id="100404" level="12">
+    <if_sid>5103</if_sid>
+    <match>capability</match>
+    <description>Manipulação suspeita de capabilities Linux detectada</description>
+    <mitre>
+      <id>T1548.001</id>
+    </mitre>
+  </rule>
+</group> 

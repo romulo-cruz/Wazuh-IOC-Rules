@@ -1,0 +1,78 @@
+<group name="dirtypipe,">
+  <!-- Regra base para eventos Dirty Pipe -->
+  <rule id="100200" level="0">
+    <decoded_as>audit</decoded_as>
+    <description>Regra base para eventos Dirty Pipe</description>
+  </rule>
+
+  <!-- Detecção de atividade do exploit -->
+  <rule id="100201" level="12">
+    <if_sid>80700</if_sid>
+    <field name="audit.key">dirtypipe</field>
+    <description>Atividade do exploit Dirty Pipe detectada (CVE-2022-0847)</description>
+    <mitre>
+      <id>T1068</id>
+    </mitre>
+  </rule>
+
+  <!-- Detecção de modificação do /etc/passwd -->
+  <rule id="100202" level="15">
+    <if_sid>80781</if_sid>
+    <field name="audit.file">/etc/passwd</field>
+    <description>Modificação suspeita do arquivo /etc/passwd detectada</description>
+    <mitre>
+      <id>T1003</id>
+    </mitre>
+  </rule>
+
+  <!-- Correlação de eventos -->
+  <rule id="100203" level="15">
+    <if_sid>100201</if_sid>
+    <if_matched_sid>100202</if_matched_sid>
+    <same_source_ip />
+    <description>Possível exploração Dirty Pipe em andamento</description>
+    <mitre>
+      <id>T1068</id>
+      <id>T1003</id>
+    </mitre>
+  </rule>
+</group>
+
+<group name="bpfdoor,">
+  <!-- Regra base para eventos BPFDoor -->
+  <rule id="100300" level="0">
+    <decoded_as>audit</decoded_as>
+    <description>Regra base para eventos BPFDoor</description>
+  </rule>
+
+  <!-- Detecção via Auditd -->
+  <rule id="100301" level="12">
+    <if_sid>80700</if_sid>
+    <field name="audit.key">possible_bpfdoor_infection</field>
+    <description>Possível infecção BPFDoor detectada - Auditd</description>
+    <mitre>
+      <id>T1204.002</id>
+    </mitre>
+  </rule>
+
+  <!-- Detecção de arquivo malicioso em /dev/shm -->
+  <rule id="100302" level="12">
+    <if_sid>554</if_sid>
+    <field name="file">/dev/shm/kdmtmpflush</field>
+    <description>Arquivo malicioso BPFDoor detectado em /dev/shm</description>
+    <mitre>
+      <id>T1204.002</id>
+    </mitre>
+  </rule>
+
+  <!-- Detecção de arquivos de persistência -->
+  <rule id="100303" level="12">
+    <if_sid>554</if_sid>
+    <field name="file">/var/run/</field>
+    <regex>haldrund\.pid$|kdevrund\.pid$|xinetd\.lock$|syslogd\.reboot$</regex>
+    <description>Arquivo de persistência BPFDoor detectado</description>
+    <mitre>
+      <id>T1204.002</id>
+    </mitre>
+  </rule>
+</group> 

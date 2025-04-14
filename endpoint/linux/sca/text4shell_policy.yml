@@ -1,0 +1,24 @@
+policy:
+  id: "text4shell_check"
+  file: "text4shell_check.yml"
+  name: "Verificação de dependência Text4Shell"
+  description: "Este documento fornece orientação para identificar a vulnerabilidade Text4shell"
+  references:
+    - https://nvd.nist.gov/vuln/detail/CVE-2022-42889
+    - https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-42889
+
+requirements:
+  title: "Verificar se Java está presente na máquina"
+  description: "Requisitos para executar a verificação SCA em máquinas com Java."
+  condition: none
+  rules:
+    - 'c:sh -c "java -version" -> r: not found'
+
+checks:
+  - id: 10000
+    title: "Garantir que Apache Commons Text anterior à v1.10 não está no sistema"
+    description: "A biblioteca Apache Commons Text é vulnerável a RCE nas versões entre 1.5 e 1.9."
+    remediation: "Atualizar a biblioteca Apache Commons Text para a versão 1.10."
+    condition: none
+    rules:
+      - 'c:find / -regex ".*commons-text.*.jar" -type f -exec sh -c "unzip -p {} META-INF/MANIFEST.MF | grep Implementation-Version" \; -> r: 1.5| 1.6| 1.7| 1.8| 1.9' 

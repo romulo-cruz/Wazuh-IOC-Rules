@@ -1,0 +1,23 @@
+<!-- Monitoramento de processos SSHD -->
+<localfile>
+  <log_format>full_command</log_format>
+  <command>ps -ef | grep -w 'sshd' | grep -v pts | awk '{print $2}' | while read pid; do ps --ppid $pid -f; done | grep -v '^UID' | grep -v -E 'sshd: \S+@pts/[0-9]+|sshd: \S+ \[\S+\]'</command>
+  <alias>sshd_child_processes</alias>
+  <frequency>60</frequency>
+</localfile>
+
+<!-- Monitoramento de portas -->
+<localfile>
+  <log_format>full_command</log_format>
+  <command>netstat -tlpn | grep LISTEN</command>
+  <alias>netstat_listening</alias>
+  <frequency>60</frequency>
+</localfile>
+
+<!-- Monitoramento de versão do XZ Utils -->
+<localfile>
+  <log_format>full_command</log_format>
+  <command>xz --version | head -n 1</command>
+  <alias>xz_version</alias>
+  <frequency>3600</frequency>
+</localfile> 

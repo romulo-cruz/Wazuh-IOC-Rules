@@ -1,0 +1,6 @@
+# Monitoramento de arquivos maliciosos do Chaos
+-w /boot/System.img.config -p wa -k possible_chaos_malware_infection
+-w /etc/32678 -p wa -k possible_chaos_malware_infection
+-w /etc/init.d/linux_kill -p wa -k possible_chaos_malware_infection
+-w /etc/id.services.conf -p wa -k possible_chaos_malware_infection
+-w /etc/profile.d/bash_config.sh -p wa -k possible_chaos_malware_infection 

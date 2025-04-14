@@ -1,0 +1,114 @@
+# Requisitos de API para Regras Wazuh
+# ===================================
+
+1. VIRUSTOTAL
+-------------
+Regras: Pandora Ransomware, Remcos RAT
+Arquivo de configuração: /var/ossec/etc/ossec.conf
+
+<ossec_config>
+  <integration>
+    <name>virustotal</name>
+    <api_key>SUA_CHAVE_API_AQUI</api_key>
+    <group>syscheck</group>
+    <alert_format>json</alert_format>
+  </integration>
+</ossec_config>
+
+Uso: Verificação de hashes de arquivos maliciosos
+Onde solicitar: https://www.virustotal.com/gui/join-us
+
+2. YARA
+-------
+Regras: Remcos RAT, RapperBot, BPFDoor
+Localização das regras: /var/ossec/active-response/bin/yara/rules/
+Arquivos necessários:
+- remcos.yar
+- rapperbot.yar
+- bpfdoor.yar
+
+Não requer API key, mas necessita instalação do YARA:
+sudo apt-get install yara (Debian/Ubuntu)
+sudo yum install yara (CentOS/RHEL)
+
+3. SYSMON
+---------
+Regras: Follina, Log4Shell, Pandora, LockBit
+Download: https://learn.microsoft.com/en-us/sysinternals/downloads/sysmon
+Configuração: /var/ossec/etc/shared/default/agent.conf
+
+<agent_config os="windows">
+  <localfile>
+    <location>Microsoft-Windows-Sysmon/Operational</location>
+    <log_format>eventchannel</log_format>
+  </localfile>
+</agent_config>
+
+4. AUDITD
+---------
+Regras: PwnKit, BPFDoor, Dirty Pipe
+Instalação: 
+sudo apt-get install auditd (Debian/Ubuntu)
+sudo yum install audit (CentOS/RHEL)
+
+Configuração: /etc/audit/rules.d/audit.rules
+Monitoramento: /var/ossec/etc/ossec.conf
+
+<localfile>
+  <log_format>audit</log_format>
+  <location>/var/log/audit/audit.log</location>
+</localfile>
+
+5. WINDOWS EVENT LOG
+-------------------
+Regras: HoaxShell, STRRAT, Raspberry Robin
+Configuração: /var/ossec/etc/shared/default/agent.conf
+
+<agent_config os="windows">
+  <localfile>
+    <location>Security</location>
+    <log_format>eventchannel</log_format>
+  </localfile>
+  <localfile>
+    <location>System</location>
+    <log_format>eventchannel</log_format>
+  </localfile>
+  <localfile>
+    <location>Application</location>
+    <log_format>eventchannel</log_format>
+  </localfile>
+</agent_config>
+
+6. APACHE/NGINX LOGS
+-------------------
+Regras: WebShell, Log4Shell
+Configuração: /var/ossec/etc/ossec.conf
+
+<localfile>
+  <log_format>apache</log_format>
+  <location>/var/log/apache2/access.log</location>
+</localfile>
+
+<localfile>
+  <log_format>nginx</log_format>
+  <location>/var/log/nginx/access.log</location>
+</localfile>
+
+# Notas Importantes
+==================
+1. Todas as chaves de API devem ser armazenadas de forma segura
+2. Recomenda-se usar variáveis de ambiente ou arquivos de configuração protegidos
+3. Verificar permissões dos arquivos de configuração (600 ou 640)
+4. Reiniciar o Wazuh manager após alterações nas configurações
+5. Testar integrações antes de colocar em produção
+
+# Verificação de Status
+======================
+- Verificar status das integrações:
+  /var/ossec/bin/wazuh-control status
+
+- Verificar logs de erro:
+  tail -f /var/ossec/logs/ossec.log
+
+- Testar configurações:
+  /var/ossec/bin/wazuh-logtest 

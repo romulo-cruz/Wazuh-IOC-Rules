@@ -1,0 +1,30 @@
+<group name="yeti,">
+    <!-- Regra base para mensagens do Yeti -->
+    <rule id="100500" level="0">
+        <decoded_as>json</decoded_as>
+        <field name="integration">yeti</field>
+        <description>Mensagens de integração do Yeti.</description>
+        <options>no_full_log</options>
+    </rule>
+
+    <!-- Detecção de malware pelo MalwareBazaar -->
+    <rule id="100501" level="12">
+        <if_sid>100500</if_sid>
+        <field name="yeti.info.source">AbuseCHMalwareBazaaar</field>
+        <description>Alerta Yeti - $(yeti.info.source) detectou este arquivo: $(yeti.source.file)</description>
+        <group>pci_dss_10.6.1,pci_dss_11.4,gdpr_IV_35.7.d,</group>
+        <options>no_full_log</options>
+        <mitre>
+            <id>T1203</id>
+        </mitre>
+    </rule>
+
+    <!-- Detecção de IPs maliciosos -->
+    <rule id="100502" level="12">
+        <if_sid>100500</if_sid>
+        <field name="yeti.info.source">AlienVaultIPReputation</field>
+        <description>Alerta Yeti - $(yeti.info.source) detectou IP suspeito: $(yeti.source.src_ip)</description>
+        <group>pci_dss_10.2.4,pci_dss_10.2.5,</group>
+        <options>no_full_log</options>
+    </rule>
+</group> 

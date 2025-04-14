@@ -1,0 +1,22 @@
+<group name="follina,attack,">
+  <!-- Detecção de processo criado por aplicativo Microsoft Office -->
+  <rule id="100400" level="12">
+    <if_sid>61603</if_sid>
+    <field name="win.eventdata.parentImage">winword\.exe$|excel\.exe$|powerpnt\.exe$|outlook\.exe$|msaccess\.exe$|lync\.exe$|mspub\.exe$|onenote\.exe$</field>
+    <description>Possível tentativa de exploração Follina (CVE-2022-30190) detectada. Novo processo criado por aplicativo Microsoft Office.</description>
+    <mitre>
+      <id>T1203</id>
+    </mitre>
+  </rule>
+  
+  <!-- Detecção de padrão específico da Follina -->
+  <rule id="100401" level="15">
+    <if_sid>100400</if_sid>
+    <field name="win.eventdata.originalFileName" type="pcre2">^msdt\.exe$</field>
+    <field name="win.eventdata.commandLine" type="pcre2">ms-msdt:(/|-)id.*(PCWDiagnostic|IT_RebrowseForFile|IT_LaunchMethod|SelectProgram)</field>
+    <description>Tentativa de exploração Follina (CVE-2022-30190) detectada. MSDT executado com padrão conhecido de exploração Follina.</description>
+    <mitre>
+      <id>T1203</id>
+    </mitre>
+  </rule>
+</group> 

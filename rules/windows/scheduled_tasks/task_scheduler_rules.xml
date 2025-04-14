@@ -1,0 +1,41 @@
+<group name="windows,sysmon,scheduled_tasks">
+  <!-- Detecção de nova tarefa agendada -->
+  <rule id="100500" level="6">
+    <if_group>windows</if_group>
+    <field name="win.eventdata.ruleName" type="pcre2">^technique_id=T1053,technique_name=Scheduled Task$</field>
+    <field name="win.eventdata.eventType" type="pcre2">^CreateKey$</field>
+    <description>Nova tarefa agendada detectada em $(win.system.computer)</description>
+    <mitre>
+      <id>T1053</id>
+    </mitre>
+  </rule>
+
+  <!-- Supressão de eventos do Windows Update -->
+  <rule id="100501" level="0">
+    <if_sid>100500</if_sid>
+    <field name="win.eventdata.targetObject" type="pcre2">^HKLM\\\\SOFTWARE\\\\Microsoft\\\\Windows NT\\\\CurrentVersion\\\\Schedule\\\\TaskCache\\\\Tree\\\\Microsoft\\\\Windows\\\\UpdateOrchestrator$</field>
+    <description>Regra de supressão para tarefas criadas pelo orquestrador de atualizações</description>
+  </rule>
+
+  <!-- Análise do conteúdo da tarefa (com argumentos) -->
+  <rule id="100502" level="10">
+    <decoded_as>json</decoded_as>
+    <field name="ScheduledTaskAR.Arguments" type="pcre2" negate="yes">^null$</field>
+    <field name="TaskName" type="pcre2">(.|\s)*\S(.|\s)*</field>
+    <description>Nova tarefa agendada "$(TaskName)" criada em "$(ScheduledTaskAR.CimSystemProperties.ServerName)". A tarefa executará o comando - "$(ScheduledTaskAR.Execute) $(ScheduledTaskAR.Arguments)".</description>
+    <mitre>
+      <id>T1053</id>
+    </mitre>
+  </rule>
+
+  <!-- Análise do conteúdo da tarefa (sem argumentos) -->
+  <rule id="100503" level="10">
+    <decoded_as>json</decoded_as>
+    <field name="ScheduledTaskAR.Arguments" type="pcre2">^null$</field>
+    <field name="TaskName" type="pcre2">(.|\s)*\S(.|\s)*</field>
+    <description>Nova tarefa agendada "$(TaskName)" criada em "$(ScheduledTaskAR.CimSystemProperties.ServerName)". A tarefa executará o comando - "$(ScheduledTaskAR.Execute)".</description>
+    <mitre>
+      <id>T1053</id>
+    </mitre>
+  </rule>
+</group> 

@@ -1,0 +1,54 @@
+policy:
+  id: "purehvnc_malware"
+  file: "purehvnc_check.yml"
+  name: "Verificação do PureHVNC RAT"
+  description: "Detecta artefatos do malware PureHVNC"
+
+requirements:
+  title: "Verificação do PureHVNC em sistemas Windows"
+  description: "Requisitos para execução da política de auditoria em plataforma Windows"
+  condition: all
+  rules:
+    - 'r:HKEY_LOCAL_MACHINE\SAM\SAM'
+
+checks:
+  - id: 77000
+    title: "Verificando arquivos ZIP do PureHVNC"
+    description: "Verifica arquivos ZIP associados ao PureHVNC na pasta Downloads"
+    remediation: "Remover os arquivos DXJS.zip e FTSP.zip da pasta Downloads"
+    condition: all
+    rules:
+      - 'not f:%USERPROFILE%\Downloads\DXJS.zip'
+      - 'not f:%USERPROFILE%\Downloads\FTSP.zip'
+
+  - id: 77001
+    title: "Verificando scripts Python do PureHVNC"
+    description: "Verifica scripts Python associados ao PureHVNC"
+    remediation: "Remover scripts Python e pasta Python suspeitos"
+    condition: all
+    rules:
+      - 'not f:%USERPROFILE%\Downloads\Python\Python312\money.py'
+      - 'not f:%USERPROFILE%\Downloads\Python\Python312\update.py'
+      - 'not f:%USERPROFILE%\Downloads\Python\Python312\upload.py'
+      - 'not f:%USERPROFILE%\Downloads\Python\Python312\time.py'
+      - 'not f:%USERPROFILE%\Downloads\Python\Python312\kam.py'
+      - 'not f:%USERPROFILE%\Downloads\Python\Python312\moment.py'
+      - 'not f:%USERPROFILE%\Downloads\Python\Python312\info.py'
+
+  - id: 77002
+    title: "Verificando pastas ocultas do PureHVNC"
+    description: "Verifica pastas ocultas criadas pelo PureHVNC"
+    remediation: "Remover pastas Python e Print suspeitas"
+    condition: all
+    rules:
+      - 'not d:%USERPROFILE%\Downloads\Python'
+      - 'not d:%USERPROFILE%\Downloads\Print'
+
+  - id: 77003
+    title: "Verificando conexões suspeitas"
+    description: "Verifica conexões de rede associadas ao PureHVNC"
+    remediation: "Investigar e bloquear conexões suspeitas"
+    condition: all
+    rules:
+      - 'not p:powershell.exe -i:any -p:443'
+      - 'not p:python.exe -i:any -p:443' 

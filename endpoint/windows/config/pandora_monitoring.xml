@@ -1,0 +1,34 @@
+<!-- Configuração do FIM -->
+<syscheck>
+  <!-- Monitorar diretórios comuns -->
+  <directories check_all="yes" realtime="yes">C:\Users\*\Downloads</directories>
+  <directories check_all="yes" realtime="yes">C:\Users\*\Desktop</directories>
+  <directories check_all="yes" realtime="yes">C:\Users\*\Documents</directories>
+  
+  <!-- Monitorar diretórios críticos -->
+  <directories check_all="yes" realtime="yes">C:\Windows\System32\vssadmin.exe</directories>
+  <directories check_all="yes" realtime="yes">C:\Windows\System32\wbadmin.exe</directories>
+  <directories check_all="yes" realtime="yes">C:\Windows\System32\bcdedit.exe</directories>
+</syscheck>
+
+<!-- Configuração do Sysmon -->
+<Sysmon schemaversion="4.50">
+  <HashAlgorithms>md5,sha256,imphash</HashAlgorithms>
+  <EventFiltering>
+    <!-- Monitorar criação de processos -->
+    <ProcessCreate onmatch="include">
+      <Image condition="contains">vssadmin.exe</Image>
+      <Image condition="contains">wbadmin.exe</Image>
+      <Image condition="contains">bcdedit.exe</Image>
+      <CommandLine condition="contains">delete shadows</CommandLine>
+      <CommandLine condition="contains">delete catalog</CommandLine>
+      <CommandLine condition="contains">set bootstatuspolicy</CommandLine>
+    </ProcessCreate>
+
+    <!-- Monitorar acesso a arquivos -->
+    <FileCreate onmatch="include">
+      <TargetFilename condition="end with">.pandora</TargetFilename>
+      <TargetFilename condition="contains">HOW_TO_DECRYPT</TargetFilename>
+    </FileCreate>
+  </EventFiltering>
+</Sysmon> 

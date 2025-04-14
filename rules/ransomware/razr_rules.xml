@@ -1,0 +1,43 @@
+<group name="razr,ransomware,malware">
+  <!-- Detecção de criptografia de arquivos -->
+  <rule id="111900" level="2">
+    <if_sid>61613</if_sid>
+    <field name="win.eventdata.image" type="pcre2">(?i)[C-Z]:.*\\\\.*.exe</field>
+    <field name="win.eventdata.targetFilename" type="pcre2">(?i)[C-Z]:.*\\\\.*.raz</field>
+    <description>Ransomware Razr $(win.eventdata.image) criptografou o arquivo $(win.eventdata.targetFilename)</description>
+    <mitre>
+      <id>T1486</id>
+      <id>T1036.005</id>
+    </mitre>
+  </rule>
+ 
+  <!-- Múltiplas criptografias -->
+  <rule id="111901" level="15" timeframe="100" frequency="5" ignore="30">
+    <if_matched_sid>111900</if_matched_sid>
+    <description>Múltiplos arquivos foram criptografados pelo ransomware Razr $(win.eventdata.image) usando a extensão ".raz"</description>
+    <mitre>
+      <id>T1486</id>
+      <id>T1036.005</id>
+    </mitre>
+  </rule>
+
+  <!-- Criação da nota de resgate -->
+  <rule id="111902" level="2">
+    <if_sid>61613</if_sid>
+    <field name="win.eventdata.image" type="pcre2">(?i)[C-Z]:.*\\\\.*.exe</field>
+    <field name="win.eventdata.targetFilename" type="pcre2">(?i)[C-Z]:.*\\\\README.txt</field>
+    <description>Possível ransomware Razr detectado. Nota de resgate $(win.eventdata.targetFilename) foi criada</description>
+    <mitre>
+      <id>T1486</id>
+    </mitre>
+  </rule>
+ 
+  <!-- Múltiplas notas de resgate -->
+  <rule id="111903" level="12" timeframe="100" frequency="5" ignore="30">
+    <if_matched_sid>111902</if_matched_sid>
+    <description>Possível ransomware Razr detectado. Múltiplas notas de resgate (README.txt) foram criadas por $(win.eventdata.image)</description>
+    <mitre>
+      <id>T1486</id>
+    </mitre>
+  </rule>
+</group> 

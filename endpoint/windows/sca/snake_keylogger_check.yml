@@ -1,0 +1,37 @@
+policy:
+  id: "Snake_keylogger"
+  file: "snake_keylogger_check.yml"
+  name: "Verificação do Snake Keylogger para Windows"
+  description: "Detectando Snake Keylogger"
+
+requirements:
+  title: "Verificando artefatos do Snake Keylogger em sistemas Windows"
+  description: "Requisitos para executar a política de auditoria em plataforma Windows"
+  condition: all
+  rules:
+    - 'r:HKEY_LOCAL_MACHINE\SAM\SAM'
+
+checks:
+  - id: 71000
+    title: "Verificando artefatos do Snake Keylogger na pasta Roaming"
+    description: "Verifica artefatos na pasta Roaming"
+    remediation: "Deletar o arquivo WeENKtk.exe da pasta Roaming"
+    condition: all
+    rules:
+      - 'not f:C:\Users\*\AppData\Roaming\WeENKtk.exe'    
+
+  - id: 71001
+    title: "Verificar se artefato do Snake Keylogger está na lista de exclusão do Windows Defender"
+    description: "Verifica exclusões do Windows Defender"
+    remediation: "Remover entrada da lista de exclusão do Windows Defender"
+    condition: all
+    rules:
+      - 'not r:HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Exclusions\Paths -> C:\Users\*\AppData\Roaming\WeENKtk.exe'
+
+  - id: 71002
+    title: "Verificar tarefa agendada WeENKtk no registro"
+    description: "Verifica tarefa agendada suspeita"
+    remediation: "Deletar pasta WeENKtk do registro"
+    condition: all
+    rules:
+      - 'not r:HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tree\Updates\WeENKtk' 

@@ -1,0 +1,2 @@
+# Regras para detecção do Amadey
+alert http $HOME_NET any -> $EXTERNAL_NET any (msg:"ET MALWARE Win32/Amadey Bot Activity (POST) M2"; flow:established,to_server; http.method; content:"POST"; http.uri; content:"/gate.php"; http.request_body; pcre:"/id=[0-9]+&vs=[0-9\.]+&sd=[a-f0-9]+&os=[0-9]+&bi=[0-9]+&ar=[0-9]+&pc=[^&]+&un=[^&]+&dm=[^&]*&av=[0-9]+&lv=[0-9]+&og=[0-9]+/"; classtype:trojan-activity; sid:2027899; rev:2;) 

@@ -1,0 +1,61 @@
+<group name="criminalip,threat_intel">
+  <!-- Regra base para Criminal IP -->
+  <rule id="100623" level="3">
+    <decoded_as>json</decoded_as>
+    <field name="integration">criminalip</field>
+    <description>Evento de integração Criminal IP</description>
+  </rule>
+
+  <!-- VPN -->
+  <rule id="100624" level="8">
+    <if_sid>100623</if_sid>
+    <field name="criminalip.is_vpn">true</field>
+    <description>IP $(criminalip.ip) identificado como VPN</description>
+    <group>vpn_detection,</group>
+  </rule>
+
+  <!-- TOR -->
+  <rule id="100625" level="10">
+    <if_sid>100623</if_sid>
+    <field name="criminalip.is_tor">true</field>
+    <description>IP $(criminalip.ip) identificado como nó TOR</description>
+    <group>tor_detection,</group>
+  </rule>
+
+  <!-- Proxy -->
+  <rule id="100626" level="8">
+    <if_sid>100623</if_sid>
+    <field name="criminalip.is_proxy">true</field>
+    <description>IP $(criminalip.ip) identificado como proxy</description>
+    <group>proxy_detection,</group>
+  </rule>
+
+  <!-- Dark Web -->
+  <rule id="100627" level="12">
+    <if_sid>100623</if_sid>
+    <field name="criminalip.is_darkweb">true</field>
+    <description>IP $(criminalip.ip) associado à Dark Web</description>
+    <group>darkweb_detection,</group>
+  </rule>
+
+  <!-- Scores de risco -->
+  <rule id="100628" level="15">
+    <if_sid>100623</if_sid>
+    <field name="criminalip.score_inbound">^9\d|100$</field>
+    <description>IP $(criminalip.ip) com risco crítico (score: $(criminalip.score_inbound))</description>
+  </rule>
+
+  <rule id="100629" level="12">
+    <if_sid>100623</if_sid>
+    <field name="criminalip.score_inbound">^[78]\d$</field>
+    <description>IP $(criminalip.ip) com risco alto (score: $(criminalip.score_inbound))</description>
+  </rule>
+
+  <!-- Scanner -->
+  <rule id="100636" level="10">
+    <if_sid>100623</if_sid>
+    <field name="criminalip.is_scanner">true</field>
+    <description>IP $(criminalip.ip) identificado como scanner</description>
+    <group>scanner_detection,</group>
+  </rule>
+</group> 

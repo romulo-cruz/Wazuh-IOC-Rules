@@ -1,0 +1,55 @@
+policy:
+  id: "cups_vulnerabilities"
+  file: "cups_checks.yml"
+  name: "Verificações de Segurança do CUPS"
+  description: "Verifica vulnerabilidades conhecidas do CUPS"
+  references:
+    - https://www.cve.org/CVERecord?id=CVE-2024-47076
+    - https://www.cve.org/CVERecord?id=CVE-2024-47175
+    - https://www.cve.org/CVERecord?id=CVE-2024-47176
+    - https://www.cve.org/CVERecord?id=CVE-2024-47177
+
+requirements:
+  title: "Verificar se o CUPS está instalado"
+  condition: any
+  rules:
+    - "c:dpkg -l cups-browsed"
+    - "c:rpm -q cups-browsed"
+
+checks:
+  - id: 100001
+    title: "Verificar versão do cups-browsed"
+    condition: all
+    rules:
+      - "not c:dpkg -l cups-browsed | grep -E '2\.0\.1|1\.' || not c:rpm -q cups-browsed | grep -E '2\.0\.1|1\.'"
+    description: "cups-browsed deve ser atualizado para versão > 2.0.1"
+    rationale: "Versões <= 2.0.1 são vulneráveis a RCE (CVE-2024-47176)"
+    remediation: "Atualizar cups-browsed para a última versão ou desinstalar se não necessário"
+    compliance:
+      - cis: "1.1.1"
+    references:
+      - CVE-2024-47176
+
+  - id: 100002
+    title: "Verificar versão do libcupsfilters"
+    condition: all
+    rules:
+      - "not c:dpkg -l libcupsfilters | grep -E '2\.1b1|1\.' || not c:rpm -q libcupsfilters | grep -E '2\.1b1|1\.'"
+    description: "libcupsfilters deve ser atualizado para versão > 2.1b1"
+    rationale: "Versões <= 2.1b1 são vulneráveis a RCE (CVE-2024-47076)"
+    remediation: "Atualizar libcupsfilters para a última versão"
+    compliance:
+      - cis: "1.1.2"
+    references:
+      - CVE-2024-47076
+
+  - id: 100003
+    title: "Verificar status do serviço cups-browsed"
+    condition: all
+    rules:
+      - "c:systemctl is-active cups-browsed.service | grep -E 'inactive|unknown'"
+    description: "O serviço cups-browsed deve estar desativado"
+    rationale: "Desativar o serviço reduz a superfície de ataque"
+    remediation: "Executar: systemctl stop cups-browsed && systemctl disable cups-browsed"
+    compliance:
+      - cis: "1.1.3" 
