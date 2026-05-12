@@ -1,4 +1,5 @@
-# Wazuh-rules
+# Wazuh-IOC-Rules
+
 Conjunto de regras e configuraç~eos para integração com Wazuh (Indicadores de comprometimento)
 
 ## Estrutura do Repositório
