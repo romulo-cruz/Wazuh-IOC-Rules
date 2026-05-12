@@ -1,5 +1,5 @@
 # Wazuh-rules
-Conjunto de regras para integração com Wazuh
+Conjunto de regras e configuraç~eos para integração com Wazuh (Indicadores de comprometimento)
 
 ## Estrutura do Repositório
 
